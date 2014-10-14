@@ -43,6 +43,9 @@ class UserParams{
 		return templateEngine.processMap(generator, userConfiguredParams , globalParamsConfig.getProcessedParams());
 	}
 	
+	public Map<String, String> getUserConfiguredParams() {
+	    return userConfiguredParams;
+	}
 
 	public void setUserConfiguredParams(Map<String, String> userConfiguredParams) {
 		this.userConfiguredParams = userConfiguredParams;

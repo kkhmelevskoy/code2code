@@ -92,7 +92,10 @@ public class Generator {
 		return userParams.translated();
 	}
 
-	
+	public Map<String, String> getUserConfiguredParams() {
+	    return userParams.getUserConfiguredParams();
+	}
+
 	public void setUserConfiguredParams(Map<String, String> userConfiguredParams) {
 		userParams.setUserConfiguredParams(userConfiguredParams);
 	}

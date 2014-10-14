@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -12,6 +13,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
@@ -19,76 +21,103 @@ import code2code.core.generator.Generator;
 import code2code.core.generator.GeneratorFactory;
 import code2code.utils.EclipseGuiUtils;
 
+public class GeneratorSelectionPage extends WizardPage {
 
-public class GeneratorSelectionPage  extends WizardPage {
+    private List<Button> generatorButtons;
+    private Generator selectedGenerator;
+    private final IProject project;
+    private IProject[] projects;
+    private Combo combo;
 
-	private List<Button> generatorButtons;
-	private Generator selectedGenerator;
-	private final IProject project;
-	
-	@Override
-	public boolean isPageComplete() {
-		return getSelectedGenerator() != null;
+    @Override
+    public boolean isPageComplete() {
+	return getSelectedGenerator() != null;
+    }
+
+    public GeneratorSelectionPage(IProject project) {
+	super("Generator Selection", "Select a Generator", null);
+	this.project = project;
+	setPageComplete(false);
+    }
+
+    public IProject getSelectedProject() {
+	int index = combo.getSelectionIndex();
+	IProject selectedProject = project;
+	if (index != -1)
+	{
+	    selectedProject = projects[index];
 	}
 	
-	public GeneratorSelectionPage(IProject project) {
-		super("Generator Selection", "Select a Generator", null);
-		this.project = project;
-		setPageComplete(false);
+	return selectedProject;
+    }
+
+    public void createControl(Composite parent) {
+	projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+
+	ScrolledComposite scrolledComposite = new ScrolledComposite(parent,
+		SWT.H_SCROLL | SWT.V_SCROLL);
+	Composite container = new Composite(scrolledComposite, SWT.NONE);
+	scrolledComposite.setContent(container);
+
+	GridLayout layout = new GridLayout();
+	layout.numColumns = 1;
+	container.setLayout(layout);
+
+	generatorButtons = new ArrayList<Button>();
+
+	Set<Generator> generators;
+	try {
+	    generators = GeneratorFactory.fromProject(project);
+	} catch (Exception e1) {
+	    EclipseGuiUtils.showErrorDialog(container.getShell(), e1);
+	    throw new RuntimeException(e1);
 	}
-	
 
-	public void createControl(Composite parent) {
+	if (generators.isEmpty()) {
+	    Label label = new Label(container, SWT.NONE);
+	    label.setText("No generators found.");
+	}
 
-		ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
-		Composite container = new Composite(scrolledComposite, SWT.NONE);
-		scrolledComposite.setContent(container);
-		
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		container.setLayout(layout);
+	String[] projectNames = new String[projects.length];
+	int index = -1;
+	for (int i = 0; i < projectNames.length; i++) {
+	    projectNames[i] = projects[i].getName();
 
-		generatorButtons = new ArrayList<Button>();
+	    if (project.equals(projects[i])) {
+		index = i;
+	    }
+	}
+	combo = new Combo(container, SWT.READ_ONLY);
+	combo.setItems(projectNames);
+	if (index != -1) {
+	    combo.select(index);
+	}
 
-		Set<Generator> generators;
-		try {
-			generators = GeneratorFactory.fromProject(project);
-		} catch (Exception e1) {
-			EclipseGuiUtils.showErrorDialog(container.getShell(), e1);
-			throw new RuntimeException(e1);
+	for (Generator generator : generators) {
+
+	    Button button = new Button(container, SWT.RADIO);
+	    button.setText(generator.getName());
+	    button.setData("generator", generator);
+
+	    button.addSelectionListener(new SelectionAdapter() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+		    selectedGenerator = (Generator) ((Button) e.getSource())
+			    .getData("generator");
+		    setPageComplete(true);
 		}
+	    });
 
-		if(generators.isEmpty()){
-			Label label = new Label(container, SWT.NONE);
-			label.setText("No generators found.");
-		}
-		
-		for (Generator generator : generators) {
-
-			Button button = new Button(container, SWT.RADIO);
-			button.setText(generator.getName());
-			button.setData("generator", generator);
-
-			button.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					selectedGenerator = (Generator) ((Button) e.getSource()).getData("generator");
-					setPageComplete(true);
-				}
-			});
-			
-			generatorButtons.add(button);
-		}
-		
-		container.setSize(container.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		
-		setControl(scrolledComposite);
+	    generatorButtons.add(button);
 	}
 
-	
-	public Generator getSelectedGenerator(){
-		return selectedGenerator;
-	}
+	container.setSize(container.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-	
+	setControl(scrolledComposite);
+    }
+
+    public Generator getSelectedGenerator() {
+	return selectedGenerator;
+    }
+
 }
