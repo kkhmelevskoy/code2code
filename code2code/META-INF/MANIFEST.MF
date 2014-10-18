@@ -12,11 +12,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.compare;bundle-version="3.4.0",
  org.eclipse.jface.text;bundle-version="3.4.0",
  org.eclipse.ui.console;bundle-version="3.3.0",
- org.eclipse.core.filesystem;bundle-version="1.2.0"
+ org.eclipse.core.filesystem;bundle-version="1.2.0",
+ org.eclipse.jdt.core;bundle-version="3.4.0",
+ org.eclipse.jdt.launching;bundle-version="3.4.0"
 Bundle-ClassPath: lib/freemarker.jar,
  .,
  lib/velocity-1.6-dep.jar,
  lib/groovy-all-1.5.7.jar
-Export-Package: 
- code2code.ui.compare,
- code2code.utils
+Export-Package: code2code.ui.compare;uses:="org.eclipse.swt.widgets,org.eclipse.jface.dialogs",
+ code2code.utils;uses:="org.eclipse.ui.console,org.eclipse.core.resources,org.eclipse.swt.widgets"

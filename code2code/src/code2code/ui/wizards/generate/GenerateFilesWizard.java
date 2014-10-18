@@ -60,7 +60,7 @@ public class GenerateFilesWizard extends Wizard implements INewWizard {
 		    Console.write("Generating " + template.getTemplateName()
 			    + " to console:");
 		    Console.write("-------------------------------------------------------------");
-		    Console.write(FileUtils.read(template.calculateResult()));
+		    Console.write(FileUtils.read(template.calculateResult(selectedProject)));
 		    Console.write("-------------------------------------------------------------");
 		} else {
 		    for (String destination : destinations.split(":")) {
@@ -79,7 +79,7 @@ public class GenerateFilesWizard extends Wizard implements INewWizard {
 
 			FileUtils.createParentFolders(file);
 
-			file.create(template.calculateResult(), false, null);
+			file.create(template.calculateResult(selectedProject), false, null);
 		    }
 		}
 

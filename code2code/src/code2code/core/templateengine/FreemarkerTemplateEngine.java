@@ -8,8 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import code2code.core.generator.Generator;
+import org.eclipse.core.resources.IProject;
 
+import code2code.core.generator.Generator;
 import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.StringTemplateLoader;
@@ -26,6 +27,7 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine  implements
 		return Arrays.asList(new String[]{"ftl"});
 	}
 
+	@Override
 	public String processString(Generator generator, String templateContent, Map<String, String> context) throws Exception {
 	
 		Configuration configuration = new Configuration();
@@ -54,7 +56,7 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine  implements
 		return out.toString();
 	}
 
-	public String processTemplate(Generator generator, String templateName, Map<String, String> context) throws Exception {
+	public String processTemplate(Generator generator, String templateName, Map<String, String> context, IProject project) throws Exception {
 		
 		Configuration configuration = new Configuration();
 		configuration.setDirectoryForTemplateLoading(new File(generator.getGeneratorFolder().getLocationURI()));

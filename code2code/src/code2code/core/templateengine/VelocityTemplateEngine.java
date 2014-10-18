@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.eclipse.core.resources.IProject;
 
 import code2code.core.generator.Generator;
 
@@ -19,7 +20,7 @@ public class VelocityTemplateEngine extends AbstractTemplateEngine  implements T
 		return Arrays.asList(new String[]{"vm"});
 	}
 
-	public String processTemplate(Generator generator, String templateName, Map<String, String> context) throws Exception {
+	public String processTemplate(Generator generator, String templateName, Map<String, String> context, IProject project) throws Exception {
 
 		VelocityEngine velocityEngine = createVelocityEngine(generator);
 		VelocityContext velocityContext = createVelocityContext(context);
@@ -31,6 +32,7 @@ public class VelocityTemplateEngine extends AbstractTemplateEngine  implements T
 	}
 	
 
+	@Override
 	public String processString(Generator generator, String templateContent, Map<String, String> context) throws Exception {
 
 		VelocityEngine velocityEngine = createVelocityEngine(generator);

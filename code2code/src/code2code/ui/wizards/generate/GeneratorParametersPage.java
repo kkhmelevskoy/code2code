@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -180,4 +181,8 @@ public class GeneratorParametersPage extends WizardPage {
 		return generatorSelectionPage.getSelectedGenerator();
 	}
 
+	public IProject getSelectedProject()
+	{
+	    	return generatorSelectionPage.getSelectedProject(); 
+	}
 }

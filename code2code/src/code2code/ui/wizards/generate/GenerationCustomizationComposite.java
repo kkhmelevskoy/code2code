@@ -3,6 +3,7 @@ package code2code.ui.wizards.generate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
@@ -30,7 +31,7 @@ public class GenerationCustomizationComposite extends Composite {
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout(SWT.VERTICAL| SWT.HORIZONTAL));
 		
-		GenerationCustomizationComposite c = new GenerationCustomizationComposite(new ArrayList<Template>(), shell, SWT.NULL);
+		GenerationCustomizationComposite c = new GenerationCustomizationComposite(new ArrayList<Template>(), shell, SWT.NULL, null);
 		
 		c.pack();
 		c.setVisible(true);
@@ -45,7 +46,7 @@ public class GenerationCustomizationComposite extends Composite {
 	}
 	  
 	  
-	public GenerationCustomizationComposite(final List<Template> results, Composite parent, int style) throws Exception {
+	public GenerationCustomizationComposite(final List<Template> results, Composite parent, int style, final IProject selectedProject) throws Exception {
 		super(parent, style);
 		
 		this.setLayout(new FillLayout(SWT.VERTICAL| SWT.HORIZONTAL));
@@ -122,7 +123,7 @@ public class GenerationCustomizationComposite extends Composite {
 					
 					PreviewDialog previewDialog;
 					try {
-						previewDialog = new PreviewDialog(GenerationCustomizationComposite.this.getShell(), result);
+						previewDialog = new PreviewDialog(GenerationCustomizationComposite.this.getShell(), result, selectedProject);
 					} catch (Exception e1) {
 						EclipseGuiUtils.showErrorDialog(GenerationCustomizationComposite.this.getShell(), e1);
 						throw new RuntimeException(e1);

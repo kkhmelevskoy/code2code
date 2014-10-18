@@ -3,6 +3,8 @@ package code2code.core.generator;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.eclipse.core.resources.IProject;
+
 import code2code.core.templateengine.TemplateEngine;
 import code2code.core.templateengine.TemplateEngineFactory;
 
@@ -30,7 +32,7 @@ public class Template {
 	}
 	
 
-	public InputStream calculateResult() throws Exception {
+	public InputStream calculateResult(IProject project) throws Exception {
 		
 		if(userChoosenResult!=null){
 			return new ByteArrayInputStream(userChoosenResult.getBytes());
@@ -39,7 +41,7 @@ public class Template {
 		TemplateEngine templateEngine = TemplateEngineFactory.forFileName(templateName);
 		
 		if(templateEngine != null){
-			return new ByteArrayInputStream(templateEngine.processTemplate(templatesConfig.getGenerator(), templateName, templatesConfig.getGenerator().calculateContext()).getBytes());
+			return new ByteArrayInputStream(templateEngine.processTemplate(templatesConfig.getGenerator(), templateName, templatesConfig.getGenerator().calculateContext(), project).getBytes());
 		}else{
 			return templatesConfig.getGenerator().getGeneratorFolder().getFile(templateName).getContents();
 		}

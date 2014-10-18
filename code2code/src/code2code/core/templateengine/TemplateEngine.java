@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 
 import code2code.core.generator.Generator;
 
@@ -20,7 +21,7 @@ public interface TemplateEngine {
 
 	String processString(Generator generator, String content, Map<String, String> context) throws Exception;
 
-	String processTemplate(Generator generator, String templateName, Map<String, String> context) throws Exception;
+	String processTemplate(Generator generator, String templateName, Map<String, String> context, IProject project) throws Exception;
 
 	boolean knowExtension(String extension);
 

@@ -2,6 +2,7 @@ package code2code.ui.wizards.generate;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -58,10 +59,11 @@ public class GenerationCustomizationPage extends WizardPage {
 		}
 		
 		final Generator selectedGenerator = generatorParametersPage.getSelectedGenerator();
+		IProject selectedProject = generatorParametersPage.getSelectedProject();
 		
 		List<Template> templates = selectedGenerator.getTemplates();		
 		
-		contents = new GenerationCustomizationComposite(templates, container, SWT.NULL);
+		contents = new GenerationCustomizationComposite(templates, container, SWT.NULL, selectedProject);
 		
 		container.pack();
 		parent.layout();

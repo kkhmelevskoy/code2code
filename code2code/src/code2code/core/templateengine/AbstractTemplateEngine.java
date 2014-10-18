@@ -11,7 +11,7 @@ import org.eclipse.core.resources.IFolder;
 import code2code.core.generator.Generator;
 
 
-public abstract class AbstractTemplateEngine {
+public abstract class AbstractTemplateEngine implements TemplateEngine {
 
 	public boolean canFindKnownFile(IFolder folder, String fileName) {
 
