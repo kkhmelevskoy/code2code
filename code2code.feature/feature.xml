@@ -2,11 +2,11 @@
 <feature
       id="code2code"
       label="code2code Feature"
-      version="0.9.2"
-      provider-name="Samuel Rizzo">
+      version="0.9.3"
+      provider-name="Konstantin Khmelevskoy">
 
-   <description url="http://srizzo.github.com/code2code">
-      http://srizzo.github.com/code2code
+   <description url="http://kkhmelevskoy.github.com/code2code">
+      http://kkhmelevskoy.github.com/code2code
    </description>
 
    <license>
@@ -33,14 +33,14 @@ OTHER DEALINGS IN THE SOFTWARE.
    </license>
 
    <url>
-      <update label="code2code" url="http://srizzo.github.com/code2code/updatesite/"/>
+      <update label="code2code" url="http://kkhmelevskoy.github.com/code2code/updatesite/"/>
    </url>
 
    <plugin
          id="code2code"
          download-size="0"
          install-size="0"
-         version="0.9.2"
+         version="0.9.3"
          unpack="false"/>
 
 </feature>
