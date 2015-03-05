@@ -7,102 +7,105 @@ import java.util.Map;
 import org.eclipse.core.resources.IFolder;
 
 public class Generator {
-	
-	final private IFolder generatorFolder;
-	
-	final private DescriptionConfig descriptionConfig;
-	final private GlobalParamsConfig globalParamsConfig;
-	final private ParamsConfig paramsConfig;
-	final private TemplatesConfig templatesConfig;
 
-	final private List<Generator> nestedGenerators;
+    final private IFolder generatorFolder;
 
-	final private List<Template> templates;
+    final private DescriptionConfig descriptionConfig;
+    final private GlobalParamsConfig globalParamsConfig;
+    final private ParamsConfig paramsConfig;
+    final private TemplatesConfig templatesConfig;
 
-	final private UserParams userParams;
+    final private List<Generator> nestedGenerators;
 
-	
-	private Generator(IFolder folder) throws Exception{
-		generatorFolder = folder;
-		
-		globalParamsConfig = new GlobalParamsConfig(this);
-		descriptionConfig = new DescriptionConfig(this, globalParamsConfig);
-		paramsConfig = new ParamsConfig(this);
-		templatesConfig = new TemplatesConfig(this);
-		
-		nestedGenerators = templatesConfig.getNestedGenerators();
-		
-		templates = calculateGeneratorTemplates();
-		
-		userParams = new UserParams(this, globalParamsConfig, paramsConfig, nestedGenerators);
-		
+    final private List<Template> templates;
+
+    final private UserParams userParams;
+
+    final private String[] generatorClassPath;
+
+    private Generator(IFolder folder, String[] generatorClassPath)
+	    throws Exception {
+	generatorFolder = folder;
+
+	globalParamsConfig = new GlobalParamsConfig(this);
+	descriptionConfig = new DescriptionConfig(this, globalParamsConfig);
+	paramsConfig = new ParamsConfig(this);
+	templatesConfig = new TemplatesConfig(this);
+
+	nestedGenerators = templatesConfig.getNestedGenerators();
+
+	templates = calculateGeneratorTemplates();
+
+	userParams = new UserParams(this, globalParamsConfig, paramsConfig,
+		nestedGenerators);
+
+	this.generatorClassPath = generatorClassPath;
+    }
+
+    public static Generator fromFolder(IFolder folder, String[] generatorClassPath)
+	    throws Exception {
+	return new Generator(folder, generatorClassPath);
+    }
+
+    private List<Template> calculateGeneratorTemplates() throws Exception {
+
+	List<Template> templates = templatesConfig.getTemplates();
+
+	for (Generator nestedGenerator : nestedGenerators) {
+	    templates.addAll(nestedGenerator.calculateGeneratorTemplates());
 	}
 
-	public static Generator fromFolder(IFolder folder) throws Exception {
-		return new Generator(folder);
+	return templates;
+    }
+
+    public List<Template> calculateChoosenTemplatesToGenerate()
+	    throws Exception {
+
+	List<Template> templatesToGenerate = new ArrayList<Template>();
+
+	for (Template template : templates) {
+	    if (template.isSelectedToGenerate()) {
+		templatesToGenerate.add(template);
+	    }
 	}
 
-	
-	private List<Template> calculateGeneratorTemplates() throws Exception {
-		
-		List<Template> templates = templatesConfig.getTemplates();
-		
-		for (Generator nestedGenerator : nestedGenerators) {
-			templates.addAll(nestedGenerator.calculateGeneratorTemplates());
-		}
+	return templatesToGenerate;
+    }
 
-		return templates;
-	}
-	
+    public IFolder getGeneratorFolder() {
+	return generatorFolder;
+    }
 
-	public List<Template> calculateChoosenTemplatesToGenerate() throws Exception {
-		
-		List<Template> templatesToGenerate = new ArrayList<Template>();
-		
-		for (Template template : templates) {
-			if(template.isSelectedToGenerate()){
-				templatesToGenerate.add(template);
-			}
-		}
-		
-		return templatesToGenerate;
-	}
-	
+    public String getName() {
+	return generatorFolder.getFullPath().removeFirstSegments(2)
+		.removeFileExtension().toString();
+    }
 
-	public IFolder getGeneratorFolder() {
-		return generatorFolder;
-	}
-	
-	
-	public String getName() {
-		return generatorFolder.getFullPath().removeFirstSegments(2).removeFileExtension().toString();
-	}
+    public String getDescription() {
+	return descriptionConfig.getDescription();
+    }
 
-	public String getDescription() {
-		return descriptionConfig.getDescription();
-	}
+    public Map<String, String> calculateRequiredParams() {
+	return userParams.calculateGeneratorRequiredParams();
+    }
 
-	
-	public Map<String, String> calculateRequiredParams() {
-		return userParams.calculateGeneratorRequiredParams();
-	}
-	
+    public Map<String, String> calculateContext() throws Exception {
+	return userParams.translated();
+    }
 
-	public Map<String, String> calculateContext() throws Exception {
-		return userParams.translated();
-	}
+    public Map<String, String> getUserConfiguredParams() {
+	return userParams.getUserConfiguredParams();
+    }
 
-	public Map<String, String> getUserConfiguredParams() {
-	    return userParams.getUserConfiguredParams();
-	}
+    public void setUserConfiguredParams(Map<String, String> userConfiguredParams) {
+	userParams.setUserConfiguredParams(userConfiguredParams);
+    }
 
-	public void setUserConfiguredParams(Map<String, String> userConfiguredParams) {
-		userParams.setUserConfiguredParams(userConfiguredParams);
-	}
-	
-	public List<Template> getTemplates() {
-		return templates;
-	}
+    public List<Template> getTemplates() {
+	return templates;
+    }
 
-
+    public String[] getGeneratorClassPath() {
+	return generatorClassPath;
+    }
 }
